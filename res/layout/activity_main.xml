@@ -10,30 +10,14 @@
         android:layout_height="match_parent"
         android:drawSelectorOnTop="false" />
 
-    <RelativeLayout
-        android:id="@+id/buttons"
+    <ImageButton
+        android:id="@+id/add_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" 
-        android:layout_centerInParent="true">
-
-        <ImageButton
-            android:id="@+id/recording"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/desc"
-            android:src="@drawable/mic"
-            />
-
-        <ImageButton
-            android:id="@+id/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/desc"
-            android:src="@drawable/play"
-            android:layout_toRightOf="@+id/recording"
-            android:layout_toEndOf="@+id/recording"/>
-    </RelativeLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/desc"
+        android:src="@drawable/add_item" />
 
     <Button
         android:id="@+id/alarm_me"
