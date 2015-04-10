@@ -3,6 +3,7 @@ package com.woodduck.alarmme;
 import java.util.Calendar;
 
 import com.woodduck.alarmme.adapter.AlarmListAdapter;
+import com.woodduck.alarmme.database.ItemDAO;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -51,6 +52,11 @@ public class MainActivity extends Activity {
                 startAddTast();
             }
         });
+        testDB();
+    }
+    private void testDB(){
+        ItemDAO test = new ItemDAO(this);
+        test.insert(new EventItem("1st","Test descript","","/sdcard/a.ddd","2015/05/02"));
     }
 
     // alarm
