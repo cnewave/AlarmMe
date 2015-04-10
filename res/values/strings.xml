@@ -15,5 +15,12 @@
     <string name="next">Next</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_my_alert_dialog_fragment">MyAlertDialogFragment</string>
+    <string name="ok">OK</string>
+
+    <!-- Add task -->
+    <string name="add_title">WHAT</string>
+    <string name="add_title_hint">Event name</string>
+    <string name="add_detail">DESCRIPTION</string>
+    <string name="add_detail_hint">Event description</string>
 
 </resources>

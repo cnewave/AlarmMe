@@ -1,11 +1,7 @@
-
 package com.woodduck.alarmme.audio;
 
-import java.io.File;
 import java.io.IOException;
-
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.util.Log;
 
 public class AudioRecorder {
@@ -21,13 +17,14 @@ public class AudioRecorder {
         return isRecording;
     }
 
-    public void startRecording() {
+    public void startRecording(String recordingPath) {
         Log.d(TAG, "startRecording..");
         try {
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            recorder.setOutputFile(getRecoringPath());
+            recorder.setMaxDuration(60 * 1000);// 60 seconds
+            recorder.setOutputFile(recordingPath);
             recorder.prepare();
             recorder.start(); // Recording is now started
         } catch (IllegalStateException e) {
@@ -40,18 +37,7 @@ public class AudioRecorder {
         isRecording = true;
     }
 
-    // need to refine the path and file name.
-    private String getRecoringPath() {
-        File sdpath = Environment.getExternalStorageDirectory();
 
-        File recordpath = new File(sdpath.getAbsolutePath() + "/record");
-        if (!recordpath.exists())
-            recordpath.mkdir();
-
-        Log.d(TAG, "get path:" + recordpath.getAbsolutePath());
-        return recordpath.getAbsolutePath() + "/" + "amc";
-
-    }
 
     public void stopRecording() {
         if (recorder != null) {

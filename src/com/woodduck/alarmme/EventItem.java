@@ -1,7 +1,13 @@
 
 package com.woodduck.alarmme;
 
-public class EventItem {
+import java.io.Serializable;
+
+public class EventItem implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4273756455770385397L;
     /*
      * Use the event 1. For alarm manager 2. List view Adapter 3. Database insert/delete/update
      */

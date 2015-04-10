@@ -6,8 +6,10 @@ import java.util.Calendar;
 import com.woodduck.alarmme.database.ItemDAO;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
@@ -18,9 +20,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
+import android.content.Intent;
 
-import java.util.Date;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class AddTaskActivity extends Activity {
@@ -33,6 +35,7 @@ public class AddTaskActivity extends Activity {
     private EditText mDetail;
 
     Calendar rightNow;
+    AudioFragment newFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,7 @@ public class AddTaskActivity extends Activity {
 
     private void initFragement() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        AudioFragment newFragment = AudioFragment.newInstance();
+        newFragment = AudioFragment.newInstance();
         ft.add(R.id.recorder_page, newFragment);
         ft.commit();
     }
@@ -117,6 +120,10 @@ public class AddTaskActivity extends Activity {
         Log.d(TAG, "Year :" + rightNow.get(Calendar.YEAR));
         Log.d(TAG, "Month :" + rightNow.get(Calendar.MONTH));
         Log.d(TAG, "Date :" + rightNow.get(Calendar.DATE));
+        // Test
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String currentDateandTime = sdf.format(rightNow.getTime());
+        Log.d(TAG, "time -->:" + currentDateandTime);
         return today.toString();
     }
 
@@ -168,14 +175,11 @@ public class AddTaskActivity extends Activity {
             String title = mTitle.getText().toString();
             String detail = mDetail.getText().toString();
 
-            EventItem item = new EventItem(title, detail, "", "", rightNow.getTime().toString());
+            EventItem item = new EventItem(title, detail, newFragment.getRecordPath(), "", rightNow.getTime()
+                    .toString());
             Log.d(TAG, "createEventItem :" + item);
-            testDB(item);
-
-            /*
-             * String temp =rightNow.getTime().toString(); DateFormat format = new SimpleDateFormat(temp); Log.d(TAG,
-             * "try format :" + format);
-             */
+            // testDB(item);
+            prepareAlarmManager(item);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -185,5 +189,19 @@ public class AddTaskActivity extends Activity {
         ItemDAO test = new ItemDAO(this);
         test.insert(item);
 
+    }
+
+    private void prepareAlarmManager(EventItem item) {
+        Intent intent = new Intent(this, PlayReceiver.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("event", item);
+        bundle.putString("msg", "play_hskay");
+        bundle.putString("audio_path", item.getAudioPath());
+        intent.putExtras(bundle);
+
+        PendingIntent pi = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, rightNow.getTimeInMillis(), pi);
     }
 }

@@ -1,11 +1,15 @@
-
 package com.woodduck.alarmme;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import com.woodduck.alarmme.audio.AudioPlayer;
 import com.woodduck.alarmme.audio.AudioRecorder;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +20,7 @@ public class AudioFragment extends Fragment {
     private String TAG = "AudioFragment";
     private ImageButton mAudioRecord;
     private ImageButton mReplay;
+    private String recordPath;
 
     public static AudioFragment newInstance() {
         AudioFragment f = new AudioFragment();
@@ -50,7 +55,8 @@ public class AudioFragment extends Fragment {
                 recorder.stopRecording();
             } else {
                 mPlayer.stop();
-                recorder.startRecording();
+                recordPath = getRecoringPath();
+                recorder.startRecording(recordPath);
             }
         }
     }
@@ -61,7 +67,28 @@ public class AudioFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Log.d(TAG, "do replay button...");
-            mPlayer.play();
+            mPlayer.play(recordPath);
         }
+    }
+
+    // need to refine the path and file name.
+    private String getRecoringPath() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String currentDateandTime = dateformat.format(calendar.getTime());
+
+        File sdpath = Environment.getExternalStorageDirectory();
+
+        File recordpath = new File(sdpath.getAbsolutePath() + "/record");
+        if (!recordpath.exists())
+            recordpath.mkdir();
+
+        recordPath = recordpath.getAbsolutePath() + "/" + currentDateandTime + ".amr";
+        Log.d(TAG, "get path:" + recordPath);
+        return recordPath;
+    }
+    
+    public String getRecordPath(){
+        return recordPath;
     }
 }

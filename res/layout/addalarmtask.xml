@@ -10,26 +10,30 @@
         android:orientation="vertical" >
 
         <TextView
+            style="@style/AddTaskTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Title..." />
+            android:text="@string/add_title" />
 
         <EditText
             android:id="@+id/title"
+            style="@style/AddTaskTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Please input the title" />
+            android:hint="@string/add_title_hint" />
 
         <TextView
+            style="@style/AddTaskTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Detail." />
+            android:text="@string/add_detail" />
 
         <EditText
             android:id="@+id/details"
+            style="@style/AddTaskTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Please input the details" />
+            android:hint="@string/add_detail_hint" />
 
         <TextView
             android:layout_width="match_parent"
@@ -73,12 +77,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="AudioRecorder" />
-
             </RadioGroup>
         </LinearLayout>
-	<!-- Video Camera/Audio Cam -->
+        <!-- Video Camera/Audio Cam -->
+
         <FrameLayout
-			android:id="@+id/recorder_page"
+            android:id="@+id/recorder_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
         </FrameLayout>

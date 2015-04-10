@@ -19,12 +19,13 @@
         android:contentDescription="@string/desc"
         android:src="@drawable/add_item" />
 
-    <Button
-        android:id="@+id/alarm_me"
+    <ImageButton
+        android:id="@+id/video_recorder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:contentDescription="@string/desc"
-        android:text="alarm test"
-        android:visibility="gone" />
+        android:src="@drawable/video" />
 
 </RelativeLayout>
