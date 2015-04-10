@@ -1,3 +1,4 @@
+
 package com.woodduck.alarmme;
 
 import android.app.Fragment;
@@ -7,10 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 public class VideoFragment extends Fragment {
     private String TAG = "VideoFragment";
-
 
     public static VideoFragment newInstance() {
         VideoFragment f = new VideoFragment();

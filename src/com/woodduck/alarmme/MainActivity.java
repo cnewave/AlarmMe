@@ -1,3 +1,4 @@
+
 package com.woodduck.alarmme;
 
 import java.util.Calendar;
@@ -35,7 +36,7 @@ public class MainActivity extends Activity {
         mAdapter = new AlarmListAdapter(this);
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(mAdapter);
-        
+
         mAlarm = (Button) findViewById(R.id.alarm_me);
         mAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,11 +53,6 @@ public class MainActivity extends Activity {
                 startAddTast();
             }
         });
-        testDB();
-    }
-    private void testDB(){
-        ItemDAO test = new ItemDAO(this);
-        test.insert(new EventItem("1st","Test descript","","/sdcard/a.ddd","2015/05/02"));
     }
 
     // alarm

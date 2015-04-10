@@ -1,6 +1,9 @@
+
 package com.woodduck.alarmme;
 
 import java.util.Calendar;
+
+import com.woodduck.alarmme.database.ItemDAO;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -12,8 +15,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TimePicker;
 import android.app.DatePickerDialog.OnDateSetListener;
+
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class AddTaskActivity extends Activity {
     private String TAG = "AlarmMeMain";
@@ -21,6 +29,8 @@ public class AddTaskActivity extends Activity {
     private Button mTimeButton;
     private Button mOKButton;
     private Button mCancelButton;
+    private EditText mTitle;
+    private EditText mDetail;
 
     Calendar rightNow;
 
@@ -40,6 +50,12 @@ public class AddTaskActivity extends Activity {
 
     private void initUI() {
         rightNow = Calendar.getInstance();
+        initEditText();
+        initButton();
+        initFragement();
+    }
+
+    private void initButton() {
         mDateButton = (Button) findViewById(R.id.datechooser);
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,13 +91,17 @@ public class AddTaskActivity extends Activity {
                 cancelTask();
             }
         });
-        initFragement();
+    }
+
+    private void initEditText() {
+        mTitle = (EditText) findViewById(R.id.title);
+        mDetail = (EditText) findViewById(R.id.details);
     }
 
     private void saveTask() {
         //
         // Create a thread to save to DB.
-
+        createEventItem();
         setResult(RESULT_OK);
         finish();
     }
@@ -141,5 +161,29 @@ public class AddTaskActivity extends Activity {
             rightNow.set(Calendar.HOUR_OF_DAY, hourOfDay);
             rightNow.set(Calendar.MINUTE, minute);
         }
+    }
+
+    private void createEventItem() {
+        try {
+            String title = mTitle.getText().toString();
+            String detail = mDetail.getText().toString();
+
+            EventItem item = new EventItem(title, detail, "", "", rightNow.getTime().toString());
+            Log.d(TAG, "createEventItem :" + item);
+            testDB(item);
+
+            /*
+             * String temp =rightNow.getTime().toString(); DateFormat format = new SimpleDateFormat(temp); Log.d(TAG,
+             * "try format :" + format);
+             */
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void testDB(EventItem item) {
+        ItemDAO test = new ItemDAO(this);
+        test.insert(item);
+
     }
 }

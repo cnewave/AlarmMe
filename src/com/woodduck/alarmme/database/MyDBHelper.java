@@ -1,4 +1,6 @@
+
 package com.woodduck.alarmme.database;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
@@ -26,6 +28,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
 
     }
+
     public static SQLiteDatabase getDatabase(Context context) {
         if (database == null || !database.isOpen()) {
             database = new MyDBHelper(context, DATABASE_NAME, null, VERSION).getWritableDatabase();
@@ -33,7 +36,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
         return database;
     }
-    
+
     public static class Detail {
         public static final String TABLE_NAME = "event_detail";
         public static final String KEY_ID = "_id";
@@ -47,12 +50,13 @@ public class MyDBHelper extends SQLiteOpenHelper {
                 + TABLE_NAME + "("
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + EVENT_NAME + " TEXT,"
-                + EVENT_DETAIL + " TEXT," 
+                + EVENT_DETAIL + " TEXT,"
                 + AUDIO_PATH + " TEXT,"
                 + VIDEO_PATH + " TEXT,"
                 + EXECUTE_TIME + " TEXT"
                 + ")";
     }
+
     private void createDatabase(SQLiteDatabase db) {
         Log.i(TAG, "createDatabase");
         db.execSQL(Detail.CREATE_TABLE);
