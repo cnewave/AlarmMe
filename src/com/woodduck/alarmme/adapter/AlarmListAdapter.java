@@ -1,12 +1,16 @@
 
 package com.woodduck.alarmme.adapter;
 
+import java.util.List;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.woodduck.alarmme.EventItem;
 import com.woodduck.alarmme.R;
 
 public class AlarmListAdapter extends BaseAdapter {
@@ -18,22 +22,25 @@ public class AlarmListAdapter extends BaseAdapter {
     String[] details = {
             "1st.........not not say", "Body ball..", "Height 5....."
     };
+    List<EventItem> mList;
 
     public AlarmListAdapter(Context context) {
         this.mContext = context;
         this.mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    public void setList(List<EventItem> list) {
+        this.mList = list;
+    }
+
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
-        return data.length;
+        return mList != null ? mList.size() : 0;
     }
 
     @Override
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
-        return null;
+        return mList != null ? mList.get(position) : null;
     }
 
     @Override
@@ -52,9 +59,11 @@ public class AlarmListAdapter extends BaseAdapter {
             vi = convertView;
         }
         TextView text = (TextView) vi.findViewById(R.id.title);
-        text.setText(data[position]);
+        // text.setText(data[position]);
+        EventItem item = (EventItem) getItem(position);
+        text.setText(item.getName());
         TextView detail = (TextView) vi.findViewById(R.id.detail);
-        detail.setText(details[position]);
+        detail.setText(item.getDetail());
         return vi;
 
     }

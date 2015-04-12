@@ -20,7 +20,8 @@
             style="@style/AddTaskTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/add_title_hint" />
+            android:hint="@string/add_title_hint"
+            android:inputType="text" />
 
         <TextView
             style="@style/AddTaskTextView"
@@ -33,12 +34,14 @@
             style="@style/AddTaskTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/add_detail_hint" />
+            android:gravity="top|start"
+            android:hint="@string/add_detail_hint"
+            android:minLines="4" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date:" />
+            android:text="@string/add_date" />
 
         <Button
             android:id="@+id/datechooser"
@@ -48,7 +51,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time" />
+            android:text="@string/add_time" />
 
         <Button
             android:id="@+id/timechooser"
@@ -67,16 +70,16 @@
                 android:orientation="horizontal" >
 
                 <RadioButton
-                    android:id="@+id/warwick"
+                    android:id="@+id/radio_video"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="VideoRecorder" />
+                    android:text="@string/add_videorecorder" />
 
                 <RadioButton
-                    android:id="@+id/kyle"
+                    android:id="@+id/radio_audio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AudioRecorder" />
+                    android:text="@string/add_audiorecorder" />
             </RadioGroup>
         </LinearLayout>
         <!-- Video Camera/Audio Cam -->
@@ -99,14 +102,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Canel" />
+            android:text="@string/cancel" />
 
         <Button
             android:id="@+id/ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="OK" />
+            android:text="@string/ok" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -1,6 +1,9 @@
 
 package com.woodduck.alarmme.database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.woodduck.alarmme.EventItem;
 
 import android.content.ContentValues;
@@ -53,6 +56,18 @@ public class ItemDAO {
         return db.delete(Detail.TABLE_NAME, where, null) > 0;
     }
 
+    public List<EventItem> getAll() {
+        List<EventItem> result = new ArrayList<>();
+        Cursor cursor = db.query(
+                Detail.TABLE_NAME, null, null, null, null, null, null, null);
+ 
+        while (cursor.moveToNext()) {
+            result.add(getRecord(cursor));
+        }
+ 
+        cursor.close();
+        return result;
+    }
     public EventItem get(long id) {
         EventItem item = null;
         String where = Detail.KEY_ID + "=" + id;
@@ -63,12 +78,10 @@ public class ItemDAO {
             item = getRecord(result);
         }
         result.close();
-        // 回傳結果
         return item;
     }
 
     public EventItem getRecord(Cursor cursor) {
-        // 準備回傳結果用的物件
         EventItem result = new EventItem();
         result.setId(cursor.getInt(0));
         result.setName(cursor.getString(1));

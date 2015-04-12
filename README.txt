@@ -1,22 +1,12 @@
+To DO items:
 
-DB create.
-1. Activity Name
-2. Action Time
-3. Interval.
-4. Decription
-5. Audio path.
-6. Location ??
-7. Reminder/ 
-
-
-View Adapter.
+1. Add edit/remove UI.
+2. Refine the item UI.
+3. Refine the add/remove UI.
+4. Camera feature is not ready.
+5. More beautiful icons.
+6. Notification.
 
 
-Notification.
-
-
-Date Selector /Time Selector.
-
-fragment
-
-customer cursor adapter view .
+More discussion.
+1. List today/weekly schedule.

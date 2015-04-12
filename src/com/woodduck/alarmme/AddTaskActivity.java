@@ -24,7 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import java.text.SimpleDateFormat;
-
+// Here we will change AddTaskActivity to support edit/add task .
 public class AddTaskActivity extends Activity {
     private String TAG = "AlarmMeMain";
     private Button mDateButton;
@@ -179,13 +179,14 @@ public class AddTaskActivity extends Activity {
                     .toString());
             Log.d(TAG, "createEventItem :" + item);
             // testDB(item);
-            prepareAlarmManager(item);
+           // prepareAlarmManager(item);
+            insertDB(item);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void testDB(EventItem item) {
+    private void insertDB(EventItem item) {
         ItemDAO test = new ItemDAO(this);
         test.insert(item);
 

@@ -5,7 +5,6 @@ import java.io.IOException;
 import android.media.MediaPlayer;
 
 public class AudioPlayer {
-    // private String TAG = "AudioPlayer";
     MediaPlayer mPlayer;
 
     public AudioPlayer() {
@@ -13,6 +12,9 @@ public class AudioPlayer {
     }
 
     public void play(String recordingPath) {
+        if (recordingPath == null || recordingPath.isEmpty()) {
+            return;
+        }
         try {
             mPlayer = new MediaPlayer();
             mPlayer.setDataSource(recordingPath);

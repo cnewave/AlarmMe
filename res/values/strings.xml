@@ -22,5 +22,11 @@
     <string name="add_title_hint">Event name</string>
     <string name="add_detail">DESCRIPTION</string>
     <string name="add_detail_hint">Event description</string>
+    <string name="add_date">Date:</string>
+    <string name="add_time">Time:</string>
+    <string name="add_videorecorder">VideoRecorder</string>
+    <string name="add_audiorecorder">AudioRecorder</string>
+    <!-- Option -->
+    <string name="opt_title">Options</string>
 
 </resources>
