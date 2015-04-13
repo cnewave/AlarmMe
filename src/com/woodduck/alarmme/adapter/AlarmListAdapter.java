@@ -4,6 +4,7 @@ package com.woodduck.alarmme.adapter;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.woodduck.alarmme.EventItem;
 import com.woodduck.alarmme.R;
 
 public class AlarmListAdapter extends BaseAdapter {
+    String TAG = "AlarmListAdapter";
     LayoutInflater mInflater;
     Context mContext;
     String[] data = {
@@ -61,6 +63,7 @@ public class AlarmListAdapter extends BaseAdapter {
         TextView text = (TextView) vi.findViewById(R.id.title);
         // text.setText(data[position]);
         EventItem item = (EventItem) getItem(position);
+        Log.d(TAG,"show title:"+item.getName());
         text.setText(item.getName());
         TextView detail = (TextView) vi.findViewById(R.id.detail);
         detail.setText(item.getDetail());

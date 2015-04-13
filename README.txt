@@ -6,7 +6,7 @@ To DO items:
 4. Camera feature is not ready.
 5. More beautiful icons.
 6. Notification.
-
+7. Limit the detail ...
 
 More discussion.
 1. List today/weekly schedule.

@@ -13,8 +13,11 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -24,8 +27,9 @@ import android.content.Context;
 import android.content.Intent;
 
 import java.text.SimpleDateFormat;
+
 // Here we will change AddTaskActivity to support edit/add task .
-public class AddTaskActivity extends Activity {
+public class AddTaskActivity extends ActionBarActivity {
     private String TAG = "AlarmMeMain";
     private Button mDateButton;
     private Button mTimeButton;
@@ -56,6 +60,9 @@ public class AddTaskActivity extends Activity {
         initEditText();
         initButton();
         initFragement();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(R.string.add_actionbar);
+        actionBar.show();
     }
 
     private void initButton() {
@@ -179,7 +186,7 @@ public class AddTaskActivity extends Activity {
                     .toString());
             Log.d(TAG, "createEventItem :" + item);
             // testDB(item);
-           // prepareAlarmManager(item);
+            // prepareAlarmManager(item);
             insertDB(item);
         } catch (Exception e) {
             e.printStackTrace();

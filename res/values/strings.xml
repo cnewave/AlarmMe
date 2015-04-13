@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AlarmMe</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Alarm Me.</string>
     <string name="desc">Image buttom usage..</string>
     <!-- add activity -->
     <string name="label_name">Event Name</string>
@@ -26,6 +25,7 @@
     <string name="add_time">Time:</string>
     <string name="add_videorecorder">VideoRecorder</string>
     <string name="add_audiorecorder">AudioRecorder</string>
+    <string name="add_actionbar">Add Event</string>
     <!-- Option -->
     <string name="opt_title">Options</string>
 
