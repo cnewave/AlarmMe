@@ -1,3 +1,4 @@
+
 package com.woodduck.alarmme;
 
 import java.io.File;
@@ -87,8 +88,8 @@ public class AudioFragment extends Fragment {
         Log.d(TAG, "get path:" + recordPath);
         return recordPath;
     }
-    
-    public String getRecordPath(){
+
+    public String getRecordPath() {
         return recordPath;
     }
 }

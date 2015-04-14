@@ -1,3 +1,4 @@
+
 package com.woodduck.alarmme.audio;
 
 import java.io.IOException;
@@ -36,8 +37,6 @@ public class AudioRecorder {
 
         isRecording = true;
     }
-
-
 
     public void stopRecording() {
         if (recorder != null) {

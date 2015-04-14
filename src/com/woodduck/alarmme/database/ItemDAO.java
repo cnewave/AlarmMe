@@ -48,6 +48,7 @@ public class ItemDAO {
         cv.put(Detail.VIDEO_PATH, item.getVideoPath());
         cv.put(Detail.EXECUTE_TIME, item.getExecuteTime());
         String where = Detail.KEY_ID + "=" + item.getId();
+        Log.d(TAG, "insert result:" + item.getId());
         return db.update(Detail.TABLE_NAME, cv, where, null) > 0;
     }
 

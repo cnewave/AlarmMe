@@ -41,12 +41,12 @@ public class AlarmListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        if(mList != null){
+        if (mList != null) {
             EventItem item = mList.get(position);
-            if(item != null){
+            if (item != null) {
                 return item.getId();
-            }            
-        }        
+            }
+        }
         return 0;
     }
 
@@ -55,17 +55,17 @@ public class AlarmListAdapter extends BaseAdapter {
 
         View vi = convertView;
         if (vi == null) {
-            vi = mInflater.inflate(R.layout.alarmitem, parent,false);
+            vi = mInflater.inflate(R.layout.alarmitem, parent, false);
         } else {
             vi = convertView;
         }
         TextView text = (TextView) vi.findViewById(R.id.title);
         // text.setText(data[position]);
         EventItem item = (EventItem) getItem(position);
-        Log.d(TAG,"show title:"+item.getName());
+        Log.d(TAG, "show title:" + item.getName());
         text.setText(item.getName());
         TextView detail = (TextView) vi.findViewById(R.id.detail);
-        Log.d(TAG,"show date:"+item.getExecuteTime());
+        Log.d(TAG, "show date:" + item.getExecuteTime());
         detail.setText(item.getDetail());
         return vi;
 

@@ -57,6 +57,8 @@ public class MainActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO Auto-generated method stub
                 Log.d(TAG, "show click ");
+                int _id = mList.get(position).getId();
+                showOptionDialog(_id);
             }
 
         });
@@ -150,6 +152,12 @@ public class MainActivity extends ActionBarActivity {
         this.startActivityForResult(addTask, ADD_TASK);
     }
 
+    private void removeEvent(final int _id) {
+        ItemDAO removeDAO = new ItemDAO(this);
+        removeDAO.delete(_id);
+        getList();
+    }
+
     private void showOptionDialog(final int _id) {
         Log.d(TAG, "show dialog " + _id);
         new AlertDialog.Builder(this)
@@ -159,6 +167,8 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG, "show dialog " + which);
                         if (which == 0) {
                             startEditTask(_id);
+                        } else if (which == 1) {
+                            removeEvent(_id);
                         }
                     }
                 })

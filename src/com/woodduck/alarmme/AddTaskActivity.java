@@ -38,6 +38,7 @@ public class AddTaskActivity extends ActionBarActivity {
     private Button mCancelButton;
     private EditText mTitle;
     private EditText mDetail;
+    private int queryID = 0;
 
     Calendar rightNow;
     AudioFragment newFragment;
@@ -66,15 +67,16 @@ public class AddTaskActivity extends ActionBarActivity {
         getIntents();
         initButton();
     }
-    private void getIntents(){
+
+    private void getIntents() {
         Intent intent = this.getIntent();
-        if(intent != null){
-            int _queryID = intent.getIntExtra("_id", 0);
-            Log.d(TAG, "query ID :" + _queryID);
-            if(_queryID != 0){
+        if (intent != null) {
+            queryID = intent.getIntExtra("_id", 0);
+            Log.d(TAG, "query ID :" + queryID);
+            if (queryID != 0) {
                 ItemDAO readDAO = new ItemDAO(this);
-                EventItem  item = readDAO.get(_queryID);
-                Log.d(TAG, "Query item :"+item);
+                EventItem item = readDAO.get(queryID);
+                Log.d(TAG, "Query item :" + item);
                 mTitle.setText(item.getName());
                 mDetail.setText(item.getDetail());
                 String execute = item.getExecuteTime();
@@ -87,7 +89,7 @@ public class AddTaskActivity extends ActionBarActivity {
                     e.printStackTrace();
                 }
             }
-        }else{
+        } else {
             Log.d(TAG, "No inten.. add activity");
         }
 
@@ -210,11 +212,17 @@ public class AddTaskActivity extends ActionBarActivity {
             String title = mTitle.getText().toString();
             String detail = mDetail.getText().toString();
 
-            EventItem item = new EventItem(title, detail, newFragment.getRecordPath(), "", getDateTime(rightNow.getTime()));
+            EventItem item = new EventItem(title, detail, newFragment.getRecordPath(), "",
+                    getDateTime(rightNow.getTime()));
+            item.setId(queryID);
             Log.d(TAG, "createEventItem :" + item);
             // testDB(item);
-            // prepareAlarmManager(item);
-            insertDB(item);
+            prepareAlarmManager(item);
+            if (queryID == 0) {
+                insertDB(item);
+            } else {
+                updateDB(item);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -229,15 +237,20 @@ public class AddTaskActivity extends ActionBarActivity {
     private void insertDB(EventItem item) {
         ItemDAO test = new ItemDAO(this);
         test.insert(item);
+    }
 
+    private void updateDB(EventItem item) {
+        ItemDAO test = new ItemDAO(this);
+        test.update(item);
     }
 
     private void prepareAlarmManager(EventItem item) {
         Intent intent = new Intent(this, PlayReceiver.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("event", item);
+        Log.d(TAG, "prepareAlarmManager.." + item);
         bundle.putString("msg", "play_hskay");
         bundle.putString("audio_path", item.getAudioPath());
+        bundle.putSerializable("event", item);
         intent.putExtras(bundle);
 
         PendingIntent pi = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
