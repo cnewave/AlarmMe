@@ -57,17 +57,18 @@ public class ItemDAO {
     }
 
     public List<EventItem> getAll() {
-        List<EventItem> result = new ArrayList<>();
+        List<EventItem> result = new ArrayList<EventItem>();
         Cursor cursor = db.query(
                 Detail.TABLE_NAME, null, null, null, null, null, null, null);
- 
+
         while (cursor.moveToNext()) {
             result.add(getRecord(cursor));
         }
- 
+
         cursor.close();
         return result;
     }
+
     public EventItem get(long id) {
         EventItem item = null;
         String where = Detail.KEY_ID + "=" + id;

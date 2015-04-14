@@ -53,7 +53,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
                 + EVENT_DETAIL + " TEXT,"
                 + AUDIO_PATH + " TEXT,"
                 + VIDEO_PATH + " TEXT,"
-                + EXECUTE_TIME + " TEXT"
+                + EXECUTE_TIME + " DATETIME"
                 + ")";
     }
 

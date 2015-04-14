@@ -6,7 +6,6 @@ import java.util.List;
 import com.woodduck.alarmme.adapter.AlarmListAdapter;
 import com.woodduck.alarmme.database.ItemDAO;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +26,7 @@ public class MainActivity extends ActionBarActivity {
     private String TAG = "AlarmMeMain";
     private ImageButton mAddTask;
     private AlarmListAdapter mAdapter;
+    List<EventItem> mList;
     private int ADD_TASK = 100;
 
     @Override
@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
         mAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddTast();
+                startAddTask();
             }
         });
         listView.setLongClickable(true);
@@ -63,8 +63,10 @@ public class MainActivity extends ActionBarActivity {
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "long click ");
-                showDialog();
+                int _id = mList.get(position).getId();
+                Log.d(TAG, "long click " + position + " id:" + _id);
+
+                showOptionDialog(_id);
                 return true;
             }
         });
@@ -72,8 +74,8 @@ public class MainActivity extends ActionBarActivity {
 
     private void getList() {
         ItemDAO dao = new ItemDAO(this);
-        List<EventItem> list = dao.getAll();
-        mAdapter.setList(list);
+        mList = dao.getAll();
+        mAdapter.setList(mList);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -137,18 +139,27 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void startAddTast() {
+    private void startAddTask() {
         Intent addTask = new Intent(this, AddTaskActivity.class);
         this.startActivityForResult(addTask, ADD_TASK);
     }
 
-    private void showDialog() {
-        Log.d(TAG, "show dialog ");
+    private void startEditTask(final int _id) {
+        Intent addTask = new Intent(this, AddTaskActivity.class);
+        addTask.putExtra("_id", _id);
+        this.startActivityForResult(addTask, ADD_TASK);
+    }
+
+    private void showOptionDialog(final int _id) {
+        Log.d(TAG, "show dialog " + _id);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.opt_title)
                 .setItems(R.array.select_dialog_items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
+                        Log.d(TAG, "show dialog " + which);
+                        if (which == 0) {
+                            startEditTask(_id);
+                        }
                     }
                 })
                 .show();

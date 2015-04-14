@@ -18,12 +18,6 @@ public class AlarmListAdapter extends BaseAdapter {
     String TAG = "AlarmListAdapter";
     LayoutInflater mInflater;
     Context mContext;
-    String[] data = {
-            "1st", "2nd", "3rd"
-    };
-    String[] details = {
-            "1st.........not not say", "Body ball..", "Height 5....."
-    };
     List<EventItem> mList;
 
     public AlarmListAdapter(Context context) {
@@ -47,7 +41,12 @@ public class AlarmListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
+        if(mList != null){
+            EventItem item = mList.get(position);
+            if(item != null){
+                return item.getId();
+            }            
+        }        
         return 0;
     }
 
@@ -56,7 +55,7 @@ public class AlarmListAdapter extends BaseAdapter {
 
         View vi = convertView;
         if (vi == null) {
-            vi = mInflater.inflate(R.layout.alarmitem, null);
+            vi = mInflater.inflate(R.layout.alarmitem, parent,false);
         } else {
             vi = convertView;
         }
@@ -66,6 +65,7 @@ public class AlarmListAdapter extends BaseAdapter {
         Log.d(TAG,"show title:"+item.getName());
         text.setText(item.getName());
         TextView detail = (TextView) vi.findViewById(R.id.detail);
+        Log.d(TAG,"show date:"+item.getExecuteTime());
         detail.setText(item.getDetail());
         return vi;
 
