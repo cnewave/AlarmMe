@@ -10,9 +10,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.Tab;
+//import android.support.v4.app.FragmentTransaction;
+//import android.support.v7.app.ActionBar;
+//import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initListView();
-        createNavigation();
+//        createNavigation();
     }
 
     private void initListView() {
@@ -80,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
         mAdapter.setList(mList);
         mAdapter.notifyDataSetChanged();
     }
-
+/*
     private void createNavigation() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
     }
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -41,26 +41,36 @@ public class AddTaskActivity extends ActionBarActivity {
     private int queryID = 0;
 
     Calendar rightNow;
-    AudioFragment newFragment;
+    AudioFragment mAudioFragment;
+    VideoFragment mVideoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.addalarmtask);
         initUI();
     }
 
-    private void initFragement() {
+    private void initAudioFragement() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        newFragment = AudioFragment.newInstance();
-        ft.add(R.id.recorder_page, newFragment);
+        mAudioFragment = AudioFragment.newInstance();
+        ft.add(R.id.recorder_page, mAudioFragment);
+        ft.commit();
+    }
+
+    private void initVideoFragement() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        mVideoFragment = VideoFragment.newInstance();
+        ft.add(R.id.recorder_page, mVideoFragment);
         ft.commit();
     }
 
     private void initUI() {
         rightNow = Calendar.getInstance();
         initEditText();
-        initFragement();
+        // initAudioFragement();
+        initVideoFragement();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.add_actionbar);
         actionBar.show();
@@ -212,7 +222,7 @@ public class AddTaskActivity extends ActionBarActivity {
             String title = mTitle.getText().toString();
             String detail = mDetail.getText().toString();
 
-            EventItem item = new EventItem(title, detail, newFragment.getRecordPath(), "",
+            EventItem item = new EventItem(title, detail, mAudioFragment.getRecordPath(), "",
                     getDateTime(rightNow.getTime()));
             item.setId(queryID);
             Log.d(TAG, "createEventItem :" + item);
