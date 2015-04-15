@@ -92,4 +92,7 @@ public class AudioFragment extends Fragment {
     public String getRecordPath() {
         return recordPath;
     }
+    public void setRecordPath(String path){
+        recordPath = path;
+    }
 }

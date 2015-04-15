@@ -26,4 +26,10 @@
         android:layout_height="60dp"
         android:layout_below="@+id/recording" />
 
+    <VideoView
+        android:id="@+id/videoView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/replay" />
+
 </RelativeLayout>

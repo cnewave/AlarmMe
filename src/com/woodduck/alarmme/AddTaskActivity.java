@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TimePicker;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
@@ -43,6 +44,8 @@ public class AddTaskActivity extends ActionBarActivity {
     Calendar rightNow;
     AudioFragment mAudioFragment;
     VideoFragment mVideoFragment;
+    RadioButton mAudioRadio;
+    RadioButton mVideoRadio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,16 +55,21 @@ public class AddTaskActivity extends ActionBarActivity {
         initUI();
     }
 
+    private void initFragments() {
+        mVideoFragment = VideoFragment.newInstance();
+        mAudioFragment = AudioFragment.newInstance();
+    }
+
     private void initAudioFragement() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        mAudioFragment = AudioFragment.newInstance();
+        ft.remove(mVideoFragment);
         ft.add(R.id.recorder_page, mAudioFragment);
         ft.commit();
     }
 
     private void initVideoFragement() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        mVideoFragment = VideoFragment.newInstance();
+        ft.remove(mAudioFragment);
         ft.add(R.id.recorder_page, mVideoFragment);
         ft.commit();
     }
@@ -69,13 +77,40 @@ public class AddTaskActivity extends ActionBarActivity {
     private void initUI() {
         rightNow = Calendar.getInstance();
         initEditText();
+        initFragments();
         // initAudioFragement();
-        initVideoFragement();
+        // initVideoFragement();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.add_actionbar);
         actionBar.show();
         getIntents();
         initButton();
+        initRadioButtons();
+    }
+
+    private void initRadioButtons() {
+
+        mAudioRadio = (RadioButton) findViewById(R.id.radio_audio);
+        mAudioRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick audio fragment");
+                initAudioFragement();
+            }
+        });
+        mVideoRadio = (RadioButton) findViewById(R.id.radio_video);
+        mVideoRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick video fragment");
+                initVideoFragement();
+            }
+        });
+        if (mAudioRadio.isChecked()) {
+            initAudioFragement();
+        } else {
+            initVideoFragement();
+        }
     }
 
     private void getIntents() {
@@ -97,6 +132,14 @@ public class AddTaskActivity extends ActionBarActivity {
                 } catch (ParseException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                }
+                String filePath = item.getVideoPath();
+                if(filePath != null){
+                    mVideoFragment.setRecordPath(filePath);
+                }
+                filePath = item.getAudioPath();
+                if(filePath != null){
+                    mAudioFragment.setRecordPath(filePath);
                 }
             }
         } else {
@@ -222,7 +265,8 @@ public class AddTaskActivity extends ActionBarActivity {
             String title = mTitle.getText().toString();
             String detail = mDetail.getText().toString();
 
-            EventItem item = new EventItem(title, detail, mAudioFragment.getRecordPath(), "",
+            EventItem item = new EventItem(title, detail, mAudioFragment.getRecordPath(),
+                    mVideoFragment.getRecordPath(),
                     getDateTime(rightNow.getTime()));
             item.setId(queryID);
             Log.d(TAG, "createEventItem :" + item);
