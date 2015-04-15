@@ -97,6 +97,7 @@
 
                 <RadioButton
                     android:id="@+id/radio_audio"
+                    android:checked="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/add_audiorecorder" />

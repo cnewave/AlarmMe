@@ -23,12 +23,14 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 public class VideoFragment extends Fragment {
     private String TAG = "VideoFragment_";
     private ImageButton mVideoRecord;
     private ImageButton mReplay;
     private ImageView mImageView;
+    private VideoView mVideoView;
 
     public static VideoFragment newInstance() {
         VideoFragment f = new VideoFragment();
@@ -49,7 +51,11 @@ public class VideoFragment extends Fragment {
         mReplay.setOnClickListener(new PlayListener());
 
         mImageView = (ImageView) view.findViewById(R.id.image);
-
+        mVideoView = (VideoView) view.findViewById(R.id.videoView1);
+        // To do [kent] should move to other places.
+        if (mVideoUri != null) {
+            mVideoView.setVideoURI(mVideoUri);
+        }
         return view;
     }
 
@@ -72,7 +78,8 @@ public class VideoFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Log.d(TAG, "do take button...");
-            takePhotowithCamera();
+            // takePhotowithCamera();
+            dispatchTakeVideoIntent();
         }
     }
 
@@ -80,11 +87,14 @@ public class VideoFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Log.d(TAG, "do replay button...");
+            mVideoView.requestFocus();
+            mVideoView.start();
         }
     }
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 2;
+    static final int REQUEST_VIDEO_CAPTURE = 3;
 
     private void takePhotowithCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -103,6 +113,12 @@ public class VideoFragment extends Fragment {
         }
     }
 
+    private void dispatchTakeVideoIntent() {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        takeVideoIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+        startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
@@ -113,11 +129,36 @@ public class VideoFragment extends Fragment {
             mImageView.setImageBitmap(imageBitmap);
             mImageView.setVisibility(View.VISIBLE);
 
-        } else if (requestCode == REQUEST_TAKE_PHOTO) {
+        } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             Log.d(TAG, "Show Image...");
             setPic();
             mImageView.setVisibility(View.VISIBLE);
+        } else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
+            Log.d(TAG, "video capture Image...");
+            handleCameraVideo(data);
         }
+    }
+
+    private void handleCameraVideo(Intent intent) {
+        mVideoUri = intent.getData();
+        Log.d(TAG, "handleCameraVideo." + mVideoUri);
+        mVideoView.setVideoURI(mVideoUri);
+        addThumbnail();
+    }
+
+    private void addThumbnail() {
+
+    }
+
+    Uri mVideoUri;
+
+    public String getRecordPath() {
+        return mVideoUri.toString();
+    }
+
+    public void setRecordPath(String uri) {
+        mVideoUri = Uri.parse(uri);
+        Log.d(TAG, "setRecordPath:" + mVideoUri);
     }
 
     String mCurrentPhotoPath;
@@ -127,7 +168,7 @@ public class VideoFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(calendar.getTime());
         String imageFileName = timeStamp + "_";
-        File storageDir = Environment.getExternalStorageDirectory();
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/record/");
         File image = File.createTempFile(
                 imageFileName, /* prefix */
                 ".jpg", /* suffix */
