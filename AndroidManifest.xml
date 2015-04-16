@@ -48,10 +48,6 @@
             android:name=".MyAlertDialogFragment"
             android:label="@string/title_activity_my_alert_dialog_fragment" >
         </activity>
-        <activity
-            android:name=".dayview.DayViewActivity"
-            android:label="@string/title_activity_dialog" >
-        </activity>
     </application>
 
 </manifest>

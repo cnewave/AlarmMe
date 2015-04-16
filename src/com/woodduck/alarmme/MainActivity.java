@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.woodduck.alarmme.adapter.AlarmListAdapter;
 import com.woodduck.alarmme.database.ItemDAO;
-import com.woodduck.alarmme.dayview.DayViewActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -110,16 +109,11 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            startDayView();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void startDayView(){
-        Intent addTask = new Intent(this, DayViewActivity.class);
-        this.startActivity(addTask);
-    }
     private void startAddTask() {
         Intent addTask = new Intent(this, AddTaskActivity.class);
         this.startActivityForResult(addTask, ADD_TASK);
