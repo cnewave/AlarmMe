@@ -26,6 +26,8 @@
     <string name="add_videorecorder">VideoRecorder</string>
     <string name="add_audiorecorder">AudioRecorder</string>
     <string name="add_actionbar">Add Event</string>
+    <string name="add_takepicture">Take Picture</string>
+
     <!-- Option -->
     <string name="opt_title">Options</string>
 

@@ -115,12 +115,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void startAddTask() {
-        Intent addTask = new Intent(this, AddTaskActivity.class);
+        Intent addTask = new Intent(this, AddEventActivity.class);
         this.startActivityForResult(addTask, ADD_TASK);
     }
 
     private void startEditTask(final int _id) {
-        Intent addTask = new Intent(this, AddTaskActivity.class);
+        Intent addTask = new Intent(this, AddEventActivity.class);
         addTask.putExtra("_id", _id);
         this.startActivityForResult(addTask, ADD_TASK);
     }

@@ -44,6 +44,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         public static final String EVENT_DETAIL = "deatil";
         public static final String AUDIO_PATH = "audiopath";
         public static final String VIDEO_PATH = "videopath";
+        public static final String ICON_PATH = "iconpath";
         public static final String EXECUTE_TIME = "execute_time";
 
         private static final String CREATE_TABLE = "CREATE TABLE "
@@ -53,6 +54,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
                 + EVENT_DETAIL + " TEXT,"
                 + AUDIO_PATH + " TEXT,"
                 + VIDEO_PATH + " TEXT,"
+                + ICON_PATH + " TEXT,"
                 + EXECUTE_TIME + " DATETIME"
                 + ")";
     }

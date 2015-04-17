@@ -37,7 +37,7 @@
         </receiver>
 
         <activity
-            android:name=".AddTaskActivity"
+            android:name=".AddEventActivity"
             android:label="@string/title_activity_add_task" >
         </activity>
         <activity
@@ -47,6 +47,8 @@
         <activity
             android:name=".MyAlertDialogFragment"
             android:label="@string/title_activity_my_alert_dialog_fragment" >
+        </activity>
+        <activity android:name=".view.DayScheduleActivity" >
         </activity>
     </application>
 

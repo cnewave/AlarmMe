@@ -1,37 +1,61 @@
 
 package com.woodduck.alarmme;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import com.woodduck.alarmme.database.ItemDAO;
 
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TimePicker;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+
 // Here we will change AddTaskActivity to support edit/add task .
-public class AddTaskActivity extends ActionBarActivity {
+public class AddEventActivity extends ActionBarActivity {
     private String TAG = "AlarmMeMain";
     private Button mDateButton;
     private Button mTimeButton;
@@ -40,6 +64,8 @@ public class AddTaskActivity extends ActionBarActivity {
     private EditText mTitle;
     private EditText mDetail;
     private int queryID = 0;
+    // icon chooser
+    private ImageButton mIconChooser;
 
     Calendar rightNow;
     AudioFragment mAudioFragment;
@@ -51,7 +77,7 @@ public class AddTaskActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        setContentView(R.layout.addalarmtask);
+        setContentView(R.layout.add_event_task);
         initUI();
     }
 
@@ -83,9 +109,16 @@ public class AddTaskActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.add_actionbar);
         actionBar.show();
-        getIntents();
+
         initButton();
         initRadioButtons();
+        getIntents();
+    }
+
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "Width:" + mIconChooser.getWidth());
+        Log.d(TAG, "Heigh:" + mIconChooser.getHeight());
     }
 
     private void initRadioButtons() {
@@ -134,12 +167,35 @@ public class AddTaskActivity extends ActionBarActivity {
                     e.printStackTrace();
                 }
                 String filePath = item.getVideoPath();
-                if(filePath != null){
+                if (filePath != null) {
                     mVideoFragment.setRecordPath(filePath);
                 }
                 filePath = item.getAudioPath();
-                if(filePath != null){
+                if (filePath != null) {
                     mAudioFragment.setRecordPath(filePath);
+                }
+                mCurrentPhotoPath = item.getPicturePath();
+                String path = Environment.getExternalStorageDirectory().toString();
+                Log.d(TAG, "Query... :" + mCurrentPhotoPath + " path:" + path);
+                /*
+                 * InputStream is = assetManager.open(files[index]); bitmap = BitmapFactory.decodeStream(is);
+                 */
+
+                if (mCurrentPhotoPath != null) {
+                    if (!mCurrentPhotoPath.contains(path)) {
+                        Log.d(TAG, "Get from asset");
+                        AssetManager assetManager = getAssets();
+
+                        try {
+                            InputStream is = assetManager.open(mCurrentPhotoPath);
+                            Bitmap bitmap = BitmapFactory.decodeStream(is);
+                            mIconChooser.setImageBitmap(bitmap);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        setPic();
+                    }
                 }
             }
         } else {
@@ -184,6 +240,16 @@ public class AddTaskActivity extends ActionBarActivity {
                 cancelTask();
             }
         });
+
+        mIconChooser = (ImageButton) findViewById(R.id.iconchooser);
+        mIconChooser.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showDialogWithGridView();
+            }
+        });
+
     }
 
     private void initEditText() {
@@ -265,8 +331,10 @@ public class AddTaskActivity extends ActionBarActivity {
             String title = mTitle.getText().toString();
             String detail = mDetail.getText().toString();
 
-            EventItem item = new EventItem(title, detail, mAudioFragment.getRecordPath(),
+            EventItem item = new EventItem(title, detail,
+                    mAudioFragment.getRecordPath(),
                     mVideoFragment.getRecordPath(),
+                    mCurrentPhotoPath,
                     getDateTime(rightNow.getTime()));
             item.setId(queryID);
             Log.d(TAG, "createEventItem :" + item);
@@ -311,5 +379,202 @@ public class AddTaskActivity extends ActionBarActivity {
 
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, rightNow.getTimeInMillis(), pi);
+    }
+
+    AlertDialog mAlert;
+
+    private void showDialogWithGridView() {
+        Log.d(TAG, "showDialogWithGridView...");
+        final ImageAdapter imageAdapter = new ImageAdapter(this);
+
+        GridView gridview = new GridView(this);
+        // gridview.setColumnWidth(90);
+        gridview.setNumColumns(4);
+        gridview.setAdapter(imageAdapter);
+        gridview.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                    long arg3) {
+                Log.d(TAG, "onItemClick.........." + arg2);
+                if (mIconChooser != null) {
+                    Bitmap bmp = imageAdapter.getImagebyPosition(arg2);
+                    mCurrentPhotoPath = imageAdapter.getImagePathbyPosition(arg2);
+                    mIconChooser.setImageBitmap(bmp);
+                }
+                if (mAlert != null) {
+                    mAlert.dismiss();
+                }
+            }
+        });
+
+        mAlert = new AlertDialog.Builder(this)
+                .setTitle("Icon Chooser")
+                .setView(gridview)
+                .setPositiveButton(R.string.add_takepicture, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "play...........choose icon");
+                        takePhotowithCamera();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "play...........cancel");
+                    }
+                }).create();
+        // alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+
+        mAlert.show();
+    }
+
+    public class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+        private ArrayList<Bitmap> mList = new ArrayList<Bitmap>();
+        String[] files;
+
+        public ImageAdapter(Context c) {
+            mContext = c;
+            AssetManager assetManager = c.getAssets();
+
+            try {
+                files = assetManager.list("");
+
+                // List<String> it=Arrays.asList(files);
+                Bitmap bitmap = null;
+                for (int index = 0; index < files.length; index++) {
+                    Log.d(TAG, "image path:" + files[index]);
+                    InputStream is = assetManager.open(files[index]);
+                    bitmap = BitmapFactory.decodeStream(is);
+                    mList.add(bitmap);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        public String getImagePathbyPosition(int position) {
+
+            if (position < files.length) {
+                Log.d(TAG, "getImagePathbyPosition" + files[position]);
+                return files[position];
+            }
+            Log.d(TAG, "getImagePathbyPosition null");
+            return null;
+        }
+
+        public Bitmap getImagebyPosition(int position) {
+            return (Bitmap) (mList != null ? mList.get(position) : 0);
+        }
+
+        public int getCount() {
+            return mList != null ? mList.size() : 0;
+        }
+
+        public Object getItem(int position) {
+            return null;
+        }
+
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        // create a new ImageView for each item referenced by the Adapter
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null) {
+                // if it's not recycled, initialize some attributes
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(90, 90));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setPadding(8, 8, 8, 8);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageBitmap(mList.get(position));
+            return imageView;
+        }
+    }
+
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    private void takePhotowithCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                    Uri.fromFile(photoFile));
+            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            Log.d(TAG, "do piecture..");
+        }
+    }
+
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        Calendar calendar = Calendar.getInstance();
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(calendar.getTime());
+        String imageFileName = timeStamp + "_";
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/record/");
+        File image = File.createTempFile(
+                imageFileName, /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+                );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            Log.d(TAG, "Show Image...");
+            setPic();
+            // mImageView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setPic() {
+        // Get the dimensions of the View
+        int targetW = mIconChooser.getWidth() != 0 ? mIconChooser.getWidth() : 60;
+        int targetH = mIconChooser.getHeight() != 0 ? mIconChooser.getHeight() : 60;
+        Log.d(TAG, "setPic." + targetW + " " + targetH + " mCurrentPhotoPath " + mCurrentPhotoPath);
+        if (targetW == 0 || targetH == 0) {
+            Log.d(TAG, "fail to set pcic");
+            return;
+        }
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        if (bitmap != null) {
+            Log.d(TAG, "set bitmap");
+        } else {
+            Log.d(TAG, "set bitmap null");
+        }
+        mIconChooser.setImageBitmap(bitmap);
     }
 }

@@ -32,6 +32,7 @@ public class ItemDAO {
         cv.put(Detail.EVENT_DETAIL, item.getDetail());
         cv.put(Detail.AUDIO_PATH, item.getAudioPath());
         cv.put(Detail.VIDEO_PATH, item.getVideoPath());
+        cv.put(Detail.ICON_PATH, item.getPicturePath());
         cv.put(Detail.EXECUTE_TIME, item.getExecuteTime());
 
         long id = db.insert(Detail.TABLE_NAME, null, cv);
@@ -46,6 +47,7 @@ public class ItemDAO {
         cv.put(Detail.EVENT_DETAIL, item.getDetail());
         cv.put(Detail.AUDIO_PATH, item.getAudioPath());
         cv.put(Detail.VIDEO_PATH, item.getVideoPath());
+        cv.put(Detail.ICON_PATH, item.getPicturePath());
         cv.put(Detail.EXECUTE_TIME, item.getExecuteTime());
         String where = Detail.KEY_ID + "=" + item.getId();
         Log.d(TAG, "insert result:" + item.getId());
@@ -90,7 +92,8 @@ public class ItemDAO {
         result.setDetail(cursor.getString(2));
         result.setAudioPath(cursor.getString(3));
         result.setVideoPath(cursor.getString(4));
-        result.setExecuteTime(cursor.getString(5));
+        result.setPicturePath(cursor.getString(5));
+        result.setExecuteTime(cursor.getString(6));
         return result;
     }
 }

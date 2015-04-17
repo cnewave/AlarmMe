@@ -13,19 +13,40 @@
         android:paddingRight="10dip"
         android:paddingTop="10dip" >
 
-        <TextView
-            style="@style/AddTaskTextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_title" />
+            android:orientation="horizontal" >
 
-        <EditText
-            android:id="@+id/title"
-            style="@style/AddTaskTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/add_title_hint"
-            android:inputType="text" />
+            <ImageButton
+                android:id="@+id/iconchooser"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:padding="8dp"
+                android:text="icon" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/AddTaskTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_title" />
+
+                <EditText
+                    android:id="@+id/title"
+                    style="@style/AddTaskTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/add_title_hint"
+                    android:inputType="text" />
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             style="@style/AddTaskTextView"
@@ -97,9 +118,9 @@
 
                 <RadioButton
                     android:id="@+id/radio_audio"
-                    android:checked="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="@string/add_audiorecorder" />
             </RadioGroup>
         </LinearLayout>

@@ -15,17 +15,20 @@ public class EventItem implements Serializable {
     String eventDetail;
     String audioPath;
     String videoPath;
+    String picPath;
     String execute_time;
     int _id;
 
     public EventItem() {
     }
 
-    public EventItem(String eventName, String eventDetail, String audioPath, String videoPath, String execute_time) {
+    public EventItem(String eventName, String eventDetail, String audioPath, String videoPath, String picPath,
+            String execute_time) {
         this.eventName = eventName;
         this.eventDetail = eventDetail;
         this.audioPath = audioPath;
         this.videoPath = videoPath;
+        this.picPath = picPath;
         this.execute_time = execute_time;
     }
 
@@ -77,11 +80,20 @@ public class EventItem implements Serializable {
         return execute_time;
     }
 
+    public void setPicturePath(String picPath) {
+        this.picPath = picPath;
+    }
+
+    public String getPicturePath() {
+        return picPath;
+    }
+
     public String toString() {
         return eventName + ":" +
                 eventDetail + ":" +
                 audioPath + ":" +
                 videoPath + ":" +
+                picPath + ":" +
                 execute_time + "";
     }
 }
