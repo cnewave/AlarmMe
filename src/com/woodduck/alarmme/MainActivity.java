@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.woodduck.alarmme.adapter.AlarmListAdapter;
 import com.woodduck.alarmme.database.ItemDAO;
+import com.woodduck.alarmme.view.DayScheduleActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -35,6 +36,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         initListView();
         // createNavigation();
+     //   startDayActivityTask();
     }
 
     private void initListView() {
@@ -81,20 +83,6 @@ public class MainActivity extends ActionBarActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    /*
-     * private void createNavigation() { ActionBar actionBar = getSupportActionBar();
-     * actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS); Tab tab = actionBar.newTab()
-     * .setText("Today").setTabListener(new TabListener()); actionBar.addTab(tab); tab = actionBar.newTab()
-     * .setText("Weekly") .setTabListener(new TabListener()); actionBar.addTab(tab); tab = actionBar.newTab()
-     * .setText("All") .setTabListener(new TabListener()); actionBar.addTab(tab); } public static class TabListener
-     * implements ActionBar.TabListener {
-     * @Override public void onTabReselected(android.support.v7.app.ActionBar.Tab arg0, FragmentTransaction arg1) { //
-     * TODO Auto-generated method stub }
-     * @Override public void onTabSelected(android.support.v7.app.ActionBar.Tab arg0, FragmentTransaction arg1) { //
-     * TODO Auto-generated method stub }
-     * @Override public void onTabUnselected(android.support.v7.app.ActionBar.Tab arg0, FragmentTransaction arg1) { //
-     * TODO Auto-generated method stub } }
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -122,6 +110,10 @@ public class MainActivity extends ActionBarActivity {
     private void startEditTask(final int _id) {
         Intent addTask = new Intent(this, AddEventActivity.class);
         addTask.putExtra("_id", _id);
+        this.startActivityForResult(addTask, ADD_TASK);
+    }
+    private void startDayActivityTask() {
+        Intent addTask = new Intent(this, DayScheduleActivity.class);
         this.startActivityForResult(addTask, ADD_TASK);
     }
 
