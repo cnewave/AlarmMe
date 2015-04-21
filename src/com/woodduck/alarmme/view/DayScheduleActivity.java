@@ -23,6 +23,7 @@ import com.woodduck.alarmme.database.ItemDAO;
 public class DayScheduleActivity extends Activity {
     private String TAG = "DaySchedule_TAG";
     List<EventItem> mList;
+    /** layout for day, week view*/
     LinearLayout mLayout;
 
     @Override

@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         initListView();
         // createNavigation();
-     //   startDayActivityTask();
+        startDayActivityTask();
     }
 
     private void initListView() {
