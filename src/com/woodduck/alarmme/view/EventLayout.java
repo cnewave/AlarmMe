@@ -25,4 +25,20 @@ public class EventLayout {
                 " Inbound:" + innerbound;
     }
 
+    public int getX() {
+        return this.left;
+    }
+
+    public int getY() {
+        return this.top;
+    }
+    
+    public int getAbsoluteRight(){
+        return this.left + this.right;
+    }
+    
+    public int getAbsoluteButtom(){
+        return this.top + this.buttom;
+    }
+
 }

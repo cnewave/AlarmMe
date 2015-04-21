@@ -48,7 +48,7 @@ public class DailyView extends View {
                 bottomRadius, bottomRadius
         });
         // mGradient.setCornerRadius(50);
-        mGradient.setBounds(mPadding + 10, mPadding + 10, mWidth - mPadding - 10, 1500 - 10);
+        mGradient.setBounds(mPadding + 10, mPadding + 10, mWidth - mPadding - 10, mHeight - 10);
     }
 
     private void initRectangle() {
@@ -65,14 +65,14 @@ public class DailyView extends View {
                 bottomRadius, bottomRadius
         });
         // mGradient.setCornerRadius(50);
-        mDrawable.setBounds(mPadding, mPadding, mWidth - mPadding, 1500);
+        mDrawable.setBounds(mPadding, mPadding, mWidth - mPadding, mHeight);
     }
 
     private int mEvent_Width = 200;
-    private int mEvent_HEIGHT = 200;
+    private int mEvent_HEIGHT = 300;
     private int mEvent_X = 140;
     private int mEvent_Y = 100;
-    private int SHIFT = 300;
+    private int SHIFT = 500;
 
     // EventLayout event = new EventLayout(mEvent_X, mEvent_Y, mEvent_X+mEvent_Width,mEvent_Y+ mEvent_HEIGHT);
     // EventLayout event2 = new EventLayout(mEvent_X+mShift, mEvent_Y+mShift, mEvent_X+mEvent_Width+mShift,mEvent_Y+
@@ -85,8 +85,9 @@ public class DailyView extends View {
         mGradient.draw(canvas);
 
         for (int i = 0; i < 3; i++) {
+        
             EventLayout event = new EventLayout(mEvent_X, mEvent_Y + SHIFT * i, mEvent_X + mEvent_Width, mEvent_Y
-                    + mEvent_HEIGHT + SHIFT * i);
+                    + mEvent_HEIGHT);
             initEventLayout(canvas, event);
         }
     }
@@ -107,7 +108,7 @@ public class DailyView extends View {
                 bottomRadius, bottomRadius
         });
         // mGradient.setCornerRadius(50);
-        drawable.setBounds(event.left, event.top, event.right, event.buttom);
+        drawable.setBounds(event.getX(), event.getY(), event.getAbsoluteRight(), event.getAbsoluteButtom());
 
         // RotateDrawable rotate = new RotateDrawable();
         // rotate.setDrawable(drawable);
