@@ -19,7 +19,9 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.woodduck.alarmme.EventItem;
@@ -34,6 +36,10 @@ public class DailyView extends View {
     GradientDrawable mDrawable;
     GradientDrawable mGradient;
     List<EventItem> mList;
+    // Use the ViewSwitcher to 1. do scroll up/down event. onFling or onScroll. 2. redraw the images.
+
+    GestureDetector mGestureDetector;
+    ScaleGestureDetector mScaleGestureDetector;
 
     public DailyView(Context context) {
         super(context);
@@ -44,26 +50,43 @@ public class DailyView extends View {
         Log.d(TAG, "W " + mWidth + " H " + mHeight);
         initRectangle();
         initGradient();
+        mGestureDetector = new GestureDetector(context, new CalendarGestureListener());
+        mScaleGestureDetector = new ScaleGestureDetector(context, mScaleDect);
     }
 
     private List<EventLayout> mlyaoutlist = new ArrayList<EventLayout>();
 
     public void setlist(List<EventItem> list) {
         mList = list;
-        for (int i = 0; i < mList.size(); i++)
-        {
+        recomputeLayout();
+    }
+
+    private int mX_Scale = 1;
+    private int mY_Scale = 1;
+    private int mEvent_Width = 300;
+    private int mEvent_HEIGHT = 400;
+    private int mEvent_X = 120;
+    private int mEvent_Y = 100;
+    private int SHIFT = 500;
+
+    private void recomputeLayout() {
+        mlyaoutlist.clear();
+        for (int i = 0; i < mList.size(); i++) {
             String path = mList.get(i).getPicturePath();
             EventLayout event = new EventLayout(mEvent_X, mEvent_Y + SHIFT * i, mEvent_X + mEvent_Width, mEvent_Y
-                    + mEvent_HEIGHT);
+                    + mEvent_HEIGHT + SHIFT * i);
             event.setPicPath(path);
             mlyaoutlist.add(event);
+            Log.d(TAG, "initEventLayout " + event);
         }
     }
 
     CallBackInterface mCallback;
-    public void setCallbackHandler(CallBackInterface inteface){
-        mCallback = inteface; 
+
+    public void setCallbackHandler(CallBackInterface inteface) {
+        mCallback = inteface;
     }
+
     private void initGradient() {
         mGradient = new GradientDrawable();
         mGradient.setStroke(10, Color.WHITE, 20, 30);
@@ -96,12 +119,6 @@ public class DailyView extends View {
         mDrawable.setBounds(mPadding, mPadding, mWidth - mPadding, mHeight);
     }
 
-    private int mEvent_Width = 200;
-    private int mEvent_HEIGHT = 300;
-    private int mEvent_X = 120;
-    private int mEvent_Y = 100;
-    private int SHIFT = 500;
-
     @Override
     public void onDraw(Canvas canvas) {
         Log.d(TAG, "onDraw " + getWidth() + "onDraw " + getHeight());
@@ -109,7 +126,7 @@ public class DailyView extends View {
         mDrawable.draw(canvas);
         mGradient.draw(canvas);
 
-        for (int i = 0; i < mlyaoutlist.size(); i++){
+        for (int i = 0; i < mlyaoutlist.size(); i++) {
             initEventLayout(canvas, mlyaoutlist.get(i));
         }
     }
@@ -130,7 +147,8 @@ public class DailyView extends View {
                 bottomRadius, bottomRadius
         });
         // mGradient.setCornerRadius(50);
-        drawable.setBounds(event.getX(), event.getY(), event.getAbsoluteRight(), event.getAbsolutebottom());
+        // drawable.setBounds(event.getX(), event.getY(), event.getAbsoluteRight(), event.getAbsolutebottom());
+        drawable.setBounds(event.getX(), event.getY(), event.getRight(), event.getbottom());
 
         // RotateDrawable rotate = new RotateDrawable();
         // rotate.setDrawable(drawable);
@@ -166,16 +184,15 @@ public class DailyView extends View {
         if (bitmap != null) {
             Log.d(TAG, "draw... bitmap");
             Rect dst = new Rect(event.getX() + event.getInnerbound(), event.getY() + event.getInnerbound(),
-                    event.getAbsoluteRight() - event.getInnerbound(), event.getAbsolutebottom() - event.getInnerbound());
+                    event.getRight() - event.getInnerbound(), event.getbottom() - event.getInnerbound());
             canvas.drawBitmap(bitmap, null, dst, null);
         }
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "onTouchEvent... X:" + event.getX() + " Y:" + event.getY());
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            checkIfLayoutClick(event);
-        }
+        // Log.d(TAG, "onTouchEvent... X:" + event.getX() + " Y:" + event.getY());
+        // mGestureDetector.onTouchEvent(event);
+        // mScaleGestureDetector.onTouchEvent(event);
         return true;
     }
 
@@ -184,18 +201,103 @@ public class DailyView extends View {
         float y = event.getY();
         int index = -1;
         for (int i = 0; i < mlyaoutlist.size(); i++) {
-            if(mlyaoutlist.get(i).contains(x, y)){            
+            if (mlyaoutlist.get(i).contains(x, y)) {
                 index = i;
                 break;
             }
         }
         if (index >= 0) {
             Log.d(TAG, "onTouchEvent...  found");
+            if (mCallback != null) {
+                mCallback.onViewItemClick(index);
+            }
         } else {
             Log.d(TAG, "onTouchEvent... not found");
         }
-        if(mCallback != null){
-            mCallback.onViewItemClick(index);
+
+    }
+
+    private boolean DEBUG = true;
+
+    class CalendarGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapUp(MotionEvent ev) {
+            if (DEBUG)
+                Log.e(TAG, "GestureDetector.onSingleTapUp");
+            checkIfLayoutClick(ev);
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent ev) {
+            if (DEBUG)
+                Log.e(TAG, "GestureDetector.onLongPress");
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (DEBUG)
+                Log.e(TAG, "GestureDetector.onScroll");
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (DEBUG)
+                Log.e(TAG, "GestureDetector.onFling");
+            doFling(e1, e2, velocityX, velocityY);
+            return true;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent ev) {
+            if (DEBUG)
+                Log.e(TAG, "GestureDetector.onDown");
+            return true;
         }
     }
+
+    // the flip action is not smooth.
+    private void doFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        Log.d(TAG, "doFling: velocityX " + velocityX + " velocityY:" + velocityY);
+        float deltaY = e2.getY() - e1.getY();
+
+        Log.d(TAG, "doFling: delta " + deltaY);
+
+        mEvent_Y = mEvent_Y - (int) (deltaY / 10);
+        recomputeLayout();
+        invalidate();
+
+    }
+
+    public class ScaleGestureDect implements ScaleGestureDetector.OnScaleGestureListener {
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            Log.d(TAG, "onScale " + detector.getScaleFactor());
+            // need to check the scale up/down
+            Log.d(TAG, "onScaleBegin mX_Scale " + mX_Scale + " mY_Scale " + mY_Scale);
+            mEvent_Width += 30;
+            mEvent_HEIGHT += 40;
+            recomputeLayout();
+            invalidate();
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            Log.d(TAG, "onScaleBegin ");
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+
+            float factor = detector.getScaleFactor();
+            Log.d(TAG, "onScaleEnd " + factor + " " + detector.getCurrentSpanX());
+        }
+
+    }
+
+    private ScaleGestureDect mScaleDect = new ScaleGestureDect();
 }

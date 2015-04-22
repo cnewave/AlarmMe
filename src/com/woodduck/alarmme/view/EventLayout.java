@@ -52,18 +52,18 @@ public class EventLayout {
     public int getRight() {
         return this.right;
     }
-
+/*
     public int getAbsoluteRight() {
         return this.left + this.right;
     }
-
+*/
     public int getbottom() {
         return this.bottom;
     }
-
+/*
     public int getAbsolutebottom() {
         return this.top + this.bottom;
-    }
+    }*/
     
     public boolean contains(float x, float y) {
 //        Log.d("EventLayout","this ::"+ (left < right)+ ":"+(top < bottom));
