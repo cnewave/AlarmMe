@@ -1,6 +1,7 @@
 
 package com.woodduck.alarmme.view;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 public class EventLayout {
@@ -16,6 +17,7 @@ public class EventLayout {
     public int innerbound = 30;
 
     public String picPath;
+    public Bitmap bitmap;
 
     public EventLayout(int left, int top, int right, int bottom) {
         this.left = left;
