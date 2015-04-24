@@ -9,16 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RotateDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.os.Handler;
-import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -53,7 +46,7 @@ public class DailyView extends View {
         Log.d(TAG, "W " + mWidth + " H " + mHeight);
         initRectangle();
         initGradient();
-        mGestureDetector = new GestureDetector(context, new CalendarGestureListener());
+        mGestureDetector = new GestureDetector(context, new ScrollGestureListener());
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleDect);
         mScroller = new OverScroller(context);
     }
@@ -77,6 +70,7 @@ public class DailyView extends View {
         mlyaoutlist.clear();
         for (int i = 0; i < mList.size(); i++) {
             String path = mList.get(i).getPicturePath();
+            // should not new event layout..should use set alternative
             EventLayout event = new EventLayout(mEvent_X, mEvent_Y + SHIFT * i, mEvent_X + mEvent_Width, mEvent_Y
                     + mEvent_HEIGHT + SHIFT * i);
             event.setPicPath(path);
@@ -126,18 +120,21 @@ public class DailyView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        Log.d(TAG, "onDraw " + getWidth() + "onDraw " + getHeight());
+//        Log.d(TAG, "onDraw " + getWidth() + "onDraw " + getHeight());
 
+        canvas.save();
+        canvas.scale(scaleFactor, scaleFactor);
         mDrawable.draw(canvas);
         mGradient.draw(canvas);
 
         for (int i = 0; i < mlyaoutlist.size(); i++) {
             initEventLayout(canvas, mlyaoutlist.get(i));
         }
+        canvas.restore();
     }
 
     private void initEventLayout(final Canvas canvas, EventLayout event) {
-        Log.d(TAG, "initEventLayout " + event);
+//        Log.d(TAG, "initEventLayout " + event);
 
         GradientDrawable drawable = new GradientDrawable();
         drawable.setColor(Color.BLUE);
@@ -211,13 +208,14 @@ public class DailyView extends View {
         bmOptions.inMutable = true;
         return BitmapFactory.decodeFile(pic, bmOptions);
     }
+
     private void drawImage(Canvas canvas, EventLayout event) {
         Bitmap bitmap = event.bitmap;
         if (bitmap != null) {
             // Log.d(TAG, "draw... bitmap");
             Rect dst = new Rect(event.getX() + event.getInnerbound(), event.getY() + event.getInnerbound(),
                     event.getRight() - event.getInnerbound(), event.getbottom() - event.getInnerbound());
-            
+
             canvas.drawBitmap(bitmap, null, dst, null);
         }
     }
@@ -228,8 +226,11 @@ public class DailyView extends View {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
-                mGestureDetector.onTouchEvent(event);
-                break;
+             //   if (!mGestureDetector.onTouchEvent(event)) {
+                    // if not handling, send it through to the zoom gesture
+                    return mScaleGestureDetector.onTouchEvent(event);
+               // }
+               // break;
         }
 
         // mScaleGestureDetector.onTouchEvent(event);
@@ -259,7 +260,10 @@ public class DailyView extends View {
 
     private boolean DEBUG = true;
 
-    class CalendarGestureListener extends GestureDetector.SimpleOnGestureListener {
+    class ScrollGestureListener extends GestureDetector.SimpleOnGestureListener {
+        
+        private float mCumulativeScrollX;
+        private float mCumulativeScrollY;
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
             if (DEBUG)
@@ -278,7 +282,24 @@ public class DailyView extends View {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (DEBUG)
                 Log.e(TAG, "GestureDetector.onScroll");
+            mCumulativeScrollX += distanceX;
+            mCumulativeScrollY += distanceY;
             float deltaY = e2.getY() - e1.getY();
+            float deltaX = e2.getX() - e1.getX();
+            Log.e(TAG, "GestureDetector.onScroll :"+ " deltaX:"+deltaX+" deltaX:"+deltaY);
+            int distX = (int)mCumulativeScrollX;
+            int distY = (int)mCumulativeScrollY;
+            
+            int absDistanceX = Math.abs(distX);
+            int absDistanceY = Math.abs(distY);
+            
+
+            if (absDistanceX > absDistanceY) {
+                Log.e(TAG, "GestureDetector.onScroll startedHorizontalScrolling");
+            }else{
+                Log.e(TAG, "GestureDetector.onScroll startedVerticalScrolling");
+            }
+            
             smoothScrollBy(0, (int) deltaY);
             return true;
         }
@@ -291,11 +312,28 @@ public class DailyView extends View {
             return true;
         }
 
-        @Override
-        public boolean onDown(MotionEvent ev) {
-            if (DEBUG)
-                Log.e(TAG, "GestureDetector.onDown");
+
+        public void onShowPress(MotionEvent e) {
+        }
+
+        public boolean onDown(MotionEvent e) {
+            Log.e(TAG, "GestureDetector.onDown");
             return true;
+        }
+
+        public boolean onDoubleTap(MotionEvent e) {
+            Log.e(TAG, "GestureDetector.onDoubleTap");
+            return false;
+        }
+
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            Log.e(TAG, "GestureDetector.onDoubleTapEvent");
+            return false;
+        }
+
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.e(TAG, "GestureDetector.onSingleTapConfirmed");
+            return false;
         }
     }
 
@@ -313,17 +351,26 @@ public class DailyView extends View {
         smoothScrollBy(0, (int) deltaY);
 
     }
-
+    private float scaleFactor = 1.f;
+    private static float MIN_ZOOM = 1f;
+    private static float MAX_ZOOM = 5f;
     public class ScaleGestureDect implements ScaleGestureDetector.OnScaleGestureListener {
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             Log.d(TAG, "onScale " + detector.getScaleFactor());
-            // need to check the scale up/down
+/*            // need to check the scale up/down
             Log.d(TAG, "onScaleBegin mX_Scale " + mX_Scale + " mY_Scale " + mY_Scale);
             mEvent_Width += 30;
             mEvent_HEIGHT += 40;
             recomputeLayout();
+            invalidate();*/
+            if (Math.abs(detector.getScaleFactor() -1) < 0.01){
+                Log.d(TAG, "ignore...");
+                return false; // ignore small changes
+            }
+            scaleFactor *= detector.getScaleFactor();            
+            scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));            
             invalidate();
             return true;
         }
@@ -336,7 +383,6 @@ public class DailyView extends View {
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
-
             float factor = detector.getScaleFactor();
             Log.d(TAG, "onScaleEnd " + factor + " " + detector.getCurrentSpanX());
         }
@@ -347,22 +393,15 @@ public class DailyView extends View {
     private OverScroller mScroller;
 
     public void smoothScrollBy(int dx, int dy) {
-
-        // 设置mScroller的滚动偏移量
         mScroller.startScroll(mScroller.getFinalX(), mScroller.getFinalY(), dx, dy);
-        invalidate();// 这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
+        invalidate();
     }
 
     @Override
     public void computeScroll() {
-        Log.d(TAG, "computeScroll...");
-        // 先判斷mScroller滾動是否完成
+      //  Log.d(TAG, "computeScroll...");
         if (mScroller.computeScrollOffset()) {
-
-            // 這裡調用View的scrollTo()完成實際的滾動
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-
-            // 必須調用該方法，否則不一定能看到滾動效果
             postInvalidate();
         }
         super.computeScroll();
